@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generación EEI — Registro de Miembros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#080C20;--navy-mid:#0F1535;--navy-border:#1A2550;
+  --blue:#1A3A6B;--orange:#B84A1A;--orange-light:#D4622A;
+  --text-primary:#F0EDE8;--text-secondary:#A8A4B8;--text-muted:#6B6880;
+  --input-bg:#0D1232;--input-border:#1E2A55;--input-focus:#2A3E80;
+  --success:#1D9E75;--error:#D85A30;
+  --radius:10px;--radius-lg:16px;
+}
+body{background:var(--navy);font-family:'Lato',sans-serif;color:var(--text-primary);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:2.5rem 1rem 4rem}
+.container{width:100%;max-width:580px}
+.header{text-align:center;margin-bottom:2.5rem}
+.logo-wrap{display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem}
+.logo-circle{width:88px;height:88px;border-radius:50%;background:#080C20;border:2.5px solid var(--orange);box-shadow:0 0 0 5px rgba(184,74,26,.12),0 0 0 10px rgba(184,74,26,.05);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-text-block{text-align:left;margin-left:16px}
+.logo-name{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:700;color:var(--text-primary);letter-spacing:-.3px;line-height:1.1}
+.logo-name span{color:var(--orange)}
+.logo-sub{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:500;color:var(--text-muted);letter-spacing:.12em;text-transform:uppercase;margin-top:4px}
+.header-divider{width:40px;height:2px;background:var(--orange);margin:1.5rem auto 1.25rem;border-radius:2px}
+.header h1{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700;color:var(--text-primary);margin-bottom:6px}
+.header p{font-size:14px;color:var(--text-secondary);line-height:1.6;max-width:420px;margin:0 auto}
+.form-card{background:var(--navy-mid);border:.5px solid var(--navy-border);border-radius:var(--radius-lg);padding:2rem 2rem 2.25rem}
+.progress-bar{height:3px;background:var(--navy-border);border-radius:2px;margin-bottom:1.75rem;overflow:hidden}
+.progress-fill{height:100%;background:var(--orange);border-radius:2px;transition:width .3s ease;width:0%}
+.field-group{margin-bottom:1.25rem}
+.field-label{display:flex;align-items:center;gap:6px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.field-label .req{color:var(--orange);font-size:14px;line-height:1}
+.field-wrap{position:relative}
+.field-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:16px;pointer-events:none;transition:color .2s}
+.field-wrap input{width:100%;height:50px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius);color:var(--text-primary);font-family:'Lato',sans-serif;font-size:15px;padding:0 16px 0 46px;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
+.field-wrap input::placeholder{color:var(--text-muted);font-size:14px}
+.field-wrap input:focus{border-color:var(--input-focus);box-shadow:0 0 0 3px rgba(42,62,128,.35)}
+.field-wrap input.valid{border-color:var(--success)}
+.field-wrap input.err{border-color:var(--error);box-shadow:0 0 0 3px rgba(216,90,48,.2)}
+.field-hint{font-size:12px;color:var(--text-muted);margin-top:5px;padding-left:2px}
+.field-error{font-size:12px;color:var(--error);margin-top:5px;padding-left:2px;display:none}
+.field-error.show{display:block}
+.consent-block{background:rgba(26,58,107,.18);border:1px solid var(--input-border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;margin-bottom:1.5rem;cursor:pointer}
+.consent-block input[type=checkbox]{width:18px;height:18px;flex-shrink:0;accent-color:var(--orange);margin-top:1px;cursor:pointer}
+.consent-text{font-size:13px;color:var(--text-secondary);line-height:1.5}
+.consent-text strong{color:var(--text-primary);font-weight:700}
+.btn-submit{width:100%;height:52px;background:var(--orange);border:none;border-radius:var(--radius);color:#fff;font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:background .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-submit:hover:not(:disabled){background:var(--orange-light)}
+.btn-submit:active:not(:disabled){transform:scale(.98)}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-submit.loading .btn-text{display:none}
+.btn-submit.loading .spinner{display:block}
+.success-screen{display:none;text-align:center;padding:1rem 0 .5rem}
+.success-screen.show{display:block}
+.success-icon{width:68px;height:68px;border-radius:50%;background:rgba(29,158,117,.12);border:2px solid var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem}
+.success-title{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700;color:var(--text-primary);margin-bottom:8px}
+.success-msg{font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:1.5rem}
+.success-msg strong{color:var(--text-primary)}
+.btn-another{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--navy-border);border-radius:var(--radius);color:var(--text-secondary);font-family:'Lato',sans-serif;font-size:13px;padding:8px 18px;cursor:pointer;transition:border-color .2s,color .2s}
+.btn-another:hover{border-color:var(--orange);color:var(--text-primary)}
+.error-banner{background:rgba(216,90,48,.1);border:1px solid rgba(216,90,48,.3);border-radius:var(--radius);padding:10px 14px;font-size:13px;color:#F09575;margin-bottom:1rem;display:none}
+.error-banner.show{display:block}
+.form-footer{margin-top:1.5rem;text-align:center;font-size:12px;color:var(--text-muted)}
+.form-footer a{color:var(--text-secondary);text-decoration:none}
+.form-footer a:hover{color:var(--orange)}
+.api-notice{background:rgba(26,58,107,.25);border:1px dashed var(--navy-border);border-radius:var(--radius);padding:10px 14px;font-size:12px;color:var(--text-muted);margin-bottom:1.25rem;line-height:1.5}
+.api-notice strong{color:var(--text-secondary)}
+@media(max-width:480px){body{padding:1.5rem .75rem 3rem}.form-card{padding:1.5rem 1.25rem 1.75rem}.logo-name{font-size:18px}.header h1{font-size:17px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="logo-wrap">
+      <div class="logo-circle">
+        <svg viewBox="0 0 80 80" width="72" height="72" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="30" fill="none" stroke="#1A3A6B" stroke-width="2.5"/>
+          <ellipse cx="40" cy="40" rx="13" ry="30" fill="none" stroke="#1A3A6B" stroke-width="1.5"/>
+          <line x1="11" y1="40" x2="69" y2="40" stroke="#1A3A6B" stroke-width="1.5"/>
+          <line x1="14" y1="27" x2="66" y2="27" stroke="#1A3A6B" stroke-width="1"/>
+          <line x1="14" y1="53" x2="66" y2="53" stroke="#1A3A6B" stroke-width="1"/>
+          <path d="M28 26 Q32 22 38 24 Q42 22 46 25 Q44 30 40 32 Q34 30 28 26Z" fill="#B84A1A" opacity=".85"/>
+          <path d="M24 36 Q28 33 34 35 Q36 39 32 42 Q26 41 24 36Z" fill="#B84A1A" opacity=".85"/>
+          <path d="M42 35 Q48 33 52 37 Q50 42 46 43 Q41 41 42 35Z" fill="#B84A1A" opacity=".7"/>
+          <path d="M30 47 Q36 45 40 48 Q38 53 34 54 Q28 52 30 47Z" fill="#B84A1A" opacity=".7"/>
+          <line x1="32" y1="48" x2="62" y2="18" stroke="#B84A1A" stroke-width="3" stroke-linecap="round"/>
+          <polygon points="62,18 55,18 62,25" fill="#B84A1A"/>
+          <rect x="33" y="38" width="14" height="10" rx="1" fill="#F0EDE8" opacity=".9"/>
+          <line x1="40" y1="38" x2="40" y2="48" stroke="#1A3A6B" stroke-width="1.2"/>
+          <line x1="35" y1="41" x2="38.5" y2="41" stroke="#1A3A6B" stroke-width=".8"/>
+          <line x1="35" y1="43" x2="38.5" y2="43" stroke="#1A3A6B" stroke-width=".8"/>
+          <line x1="41.5" y1="41" x2="45" y2="41" stroke="#1A3A6B" stroke-width=".8"/>
+          <line x1="41.5" y1="43" x2="45" y2="43" stroke="#1A3A6B" stroke-width=".8"/>
+          <rect x="37.5" y="49" width="5" height="7" rx=".5" fill="#B84A1A" opacity=".8"/>
+          <circle cx="40" cy="52" r="1.5" fill="none" stroke="#F0EDE8" stroke-width=".8"/>
+          <path d="M58 58 Q60 54 63 52" stroke="#B84A1A" stroke-width="1.2" fill="none"/>
+          <ellipse cx="61" cy="54.5" rx="3" ry="1.5" fill="#B84A1A" opacity=".7" transform="rotate(-30 61 54.5)"/>
+          <ellipse cx="63.5" cy="51.5" rx="3" ry="1.5" fill="#B84A1A" opacity=".7" transform="rotate(-45 63.5 51.5)"/>
+          <ellipse cx="59" cy="57" rx="3" ry="1.5" fill="#B84A1A" opacity=".7" transform="rotate(-15 59 57)"/>
+        </svg>
+      </div>
+      <div class="logo-text-block">
+        <div class="logo-name">Generación <span>EEI</span></div>
+        <div class="logo-sub">Movimiento Estudiantil · UCV</div>
+      </div>
+    </div>
+    <div class="header-divider"></div>
+    <h1>Registro de Nuevos Miembros</h1>
+    <p>Forma parte del movimiento. Completa el formulario y únete a la comunidad de la Escuela de Estudios Internacionales.</p>
+  </div>
+
+  <div class="form-card">
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+    <div id="form-content">
+      <div class="api-notice" id="api-notice">
+        <strong>Paso final:</strong> Inserta tu Personal Access Token de Airtable en la variable <code>AIRTABLE_TOKEN</code> al inicio del script para activar la conexión en vivo.
+      </div>
+      <div class="error-banner" id="error-banner"></div>
+
+      <div class="field-group">
+        <div class="field-label">Nombre completo <span class="req">*</span></div>
+        <div class="field-wrap">
+          <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" id="nombre" placeholder="Ej. María González" autocomplete="name" oninput="onInput(0)"/>
+        </div>
+        <div class="field-error" id="err-nombre">Ingresa tu nombre completo.</div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label">Cédula de identidad <span class="req">*</span></div>
+        <div class="field-wrap">
+          <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <input type="text" id="cedula" placeholder="Ej. V-12345678" maxlength="12" oninput="onInput(1)"/>
+        </div>
+        <div class="field-hint">Formato: V-XXXXXXXX o E-XXXXXXXX</div>
+        <div class="field-error" id="err-cedula">Formato válido: V-12345678</div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label">Teléfono <span class="req">*</span></div>
+        <div class="field-wrap">
+          <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3-8.63A2 2 0 0 1 3.68 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <input type="tel" id="telefono" placeholder="Ej. 0414-1234567" autocomplete="tel" oninput="onInput(2)"/>
+        </div>
+        <div class="field-error" id="err-telefono">Número venezolano válido (ej. 0414-1234567)</div>
+      </div>
+
+      <div class="field-group" style="margin-bottom:1.5rem">
+        <div class="field-label">Correo electrónico <span class="req">*</span></div>
+        <div class="field-wrap">
+          <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <input type="email" id="correo" placeholder="tucorreo@ejemplo.com" autocomplete="email" oninput="onInput(3)"/>
+        </div>
+        <div class="field-error" id="err-correo">Ingresa un correo válido.</div>
+      </div>
+
+      <label class="consent-block">
+        <input type="checkbox" id="consent"/>
+        <div class="consent-text">Autorizo a <strong>Generación EEI</strong> a almacenar mis datos para fines de comunicación y gestión del movimiento estudiantil.</div>
+      </label>
+
+      <button class="btn-submit" id="btn-submit" onclick="submitForm()">
+        <span class="btn-text">Registrarme al movimiento</span>
+        <span class="spinner"></span>
+      </button>
+    </div>
+
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="success-title">¡Bienvenido al movimiento!</div>
+      <p class="success-msg">Tu registro fue guardado en la base de datos de <strong>Generación EEI</strong>. Pronto recibirás información sobre las próximas actividades.</p>
+      <button class="btn-another" onclick="resetForm()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.96"/></svg>
+        Registrar otro miembro
+      </button>
+    </div>
+  </div>
+
+  <div class="form-footer">
+    Datos gestionados de forma segura · <a href="https://instagram.com/generacioneeiucv" target="_blank">@generacioneeiucv</a>
+  </div>
+</div>
+
+<script>
+// ─── CONFIGURACIÓN ────────────────────────────────────────────────
+const AIRTABLE_TOKEN  = 'TU_PERSONAL_ACCESS_TOKEN_AQUI';
+const BASE_ID         = 'appYVmxvrEt6hvxKX';
+const TABLE_ID        = 'tblzd75v1SnJrKTKO';
+
+// Field IDs mapeados desde tu tabla Estudiantes en Airtable
+const FIELD = {
+  nombre:    'fldwBXxAgOO6C2YRW',  // Nombre completo
+  cedula:    'fldGhCd4Ahm1v15V5',  // Documento de identidad
+  telefono:  'fldq9sNHc07re8cNG',  // Teléfono contacto
+  correo:    'fldtVLIEp4gUWlmQL',  // Correo electrónico
+  estado:    'fldKUq24ffnGUopZS',  // Estado actual
+  ingreso:   'fldYwLdDCzvpxNx7A',  // Fecha de ingreso
+};
+// ─────────────────────────────────────────────────────────────────
+
+const IDS    = ['nombre','cedula','telefono','correo'];
+const TOTAL  = IDS.length;
+
+if (AIRTABLE_TOKEN !== 'TU_PERSONAL_ACCESS_TOKEN_AQUI') {
+  document.getElementById('api-notice').style.display = 'none';
+}
+
+function onInput(idx) {
+  const id = IDS[idx];
+  document.getElementById('err-' + id).classList.remove('show');
+  document.getElementById(id).classList.remove('err');
+  const filled = IDS.filter(i => document.getElementById(i).value.trim() !== '').length;
+  document.getElementById('progress').style.width = Math.round((filled / TOTAL) * 100) + '%';
+}
+
+function showErr(id, msg) {
+  document.getElementById('err-' + id).textContent = msg;
+  document.getElementById('err-' + id).classList.add('show');
+  document.getElementById(id).classList.add('err');
+  document.getElementById(id).focus();
+  return false;
+}
+
+function validate() {
+  const n = document.getElementById('nombre').value.trim();
+  const c = document.getElementById('cedula').value.trim();
+  const t = document.getElementById('telefono').value.trim();
+  const e = document.getElementById('correo').value.trim();
+
+  if (!n || n.length < 3) return showErr('nombre', 'Ingresa tu nombre completo.');
+  if (!/^[VvEe]-?\d{6,9}$/.test(c.replace(/\s/g,''))) return showErr('cedula', 'Formato: V-12345678 o E-12345678');
+  if (!/^(\+58|0)(4(12|14|16|24|26)|[2-9]\d{2})\d{7}$/.test(t.replace(/[-\s]/g,''))) return showErr('telefono', 'Número venezolano válido (ej. 0414-1234567)');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return showErr('correo', 'Correo electrónico inválido.');
+  if (!document.getElementById('consent').checked) {
+    const cb = document.getElementById('consent');
+    cb.style.outline = '2px solid #D85A30';
+    setTimeout(() => cb.style.outline = '', 2500);
+    return false;
+  }
+  return true;
+}
+
+async function submitForm() {
+  if (!validate()) return;
+  const btn = document.getElementById('btn-submit');
+  const banner = document.getElementById('error-banner');
+  banner.classList.remove('show');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  const hoy = new Date().toISOString().split('T')[0];
+
+  if (AIRTABLE_TOKEN === 'TU_PERSONAL_ACCESS_TOKEN_AQUI') {
+    await new Promise(r => setTimeout(r, 1100));
+    showSuccess();
+    btn.classList.remove('loading'); btn.disabled = false;
+    return;
+  }
+
+  try {
+    const body = {
+      records: [{
+        fields: {
+          [FIELD.nombre]:   document.getElementById('nombre').value.trim(),
+          [FIELD.cedula]:   document.getElementById('cedula').value.trim().toUpperCase(),
+          [FIELD.telefono]: document.getElementById('telefono').value.trim(),
+          [FIELD.correo]:   document.getElementById('correo').value.trim().toLowerCase(),
+          [FIELD.estado]:   'Nuevo',
+          [FIELD.ingreso]:  hoy,
+        }
+      }]
+    };
+    const res = await fetch(
+      `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}`,
+      { method:'POST', headers:{ 'Authorization':'Bearer '+AIRTABLE_TOKEN, 'Content-Type':'application/json' }, body: JSON.stringify(body) }
+    );
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.error?.message || 'Error ' + res.status);
+    }
+    showSuccess();
+  } catch(e) {
+    banner.textContent = 'No se pudo guardar el registro: ' + e.message;
+    banner.classList.add('show');
+  }
+  btn.classList.remove('loading'); btn.disabled = false;
+}
+
+function showSuccess() {
+  document.getElementById('form-content').style.display = 'none';
+  document.getElementById('success-screen').classList.add('show');
+  document.getElementById('progress').style.width = '100%';
+}
+
+function resetForm() {
+  IDS.forEach(id => { document.getElementById(id).value = ''; document.getElementById(id).classList.remove('err','valid'); });
+  document.getElementById('consent').checked = false;
+  document.getElementById('form-content').style.display = 'block';
+  document.getElementById('success-screen').classList.remove('show');
+  document.getElementById('progress').style.width = '0%';
+}
+</script>
+</body>
+</html>
